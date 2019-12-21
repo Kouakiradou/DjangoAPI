@@ -8,7 +8,9 @@ from rest_framework import routers
 
 urlpatterns = [
     # path('', include(route.urls)),
-    path('<int:nid>/', views.getQuestionnairesById, name='getQuestionnairesById'),
-     path('poss/', views.poss1)
+    path('getQuestionnairesList/', views.getQuestionnairesList),
+    path('getAllQuestionnaires/', views.getAllQuestionnaires),
+    path('getQuestionnairesByUid/<str:id>/', views.getQuestionnairesByUid, name='getQuestionnairesByUid'),
+    path('poss/', views.poss1)
     # path('a/', views.QuestionnairesViewSet),
 ]

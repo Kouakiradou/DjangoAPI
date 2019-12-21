@@ -4,42 +4,43 @@ from django.http import HttpResponse
 from django.http import JsonResponse
 from rest_framework import viewsets
 from .models import Questionnaire, QuestionnaireContent
-from .serializers import QuestionnaireSerializers, QuestionnaireContentSerializers
+from .serializers import QuestionnaireSerializers, QuestionnaireContentSerializers, QuestionnaireListSerializers
 
 
 # Create your views here.
 
-def getQuestionairesList(request):
-    jsn = {
-        '1': 1,
-        '2': 2,
-        '3': 3
-    }
-    return JsonResponse(jsn)
+def getQuestionnairesList(request):
+    queryset = Questionnaire.objects.all()
+    return JsonResponse(QuestionnaireListSerializers(queryset, many=True).data, safe=False)
 
 
-class QuestionnairesViewSet(viewsets.ModelViewSet):
-    # lookup_field = 'patientType'
-    queryset = Questionnaire.objects.all().order_by('pk')
-    serializer_class = QuestionnaireSerializers
+def getAllQuestionnaires(request):
+    queryset = Questionnaire.objects.all()
+    # print(queryset)
+    return JsonResponse(QuestionnaireSerializers(queryset, many=True).data, safe=False)
 
 
-class QuestionnaireContentViewSet(viewsets.ModelViewSet):
-    queryset = QuestionnaireContent.objects.all().order_by('pk')
-    serializer_class = QuestionnaireContentSerializers
-
-
-def getQuestionnairesById(request, nid):
-    queryset = Questionnaire.objects.get(pk=nid)
-    print(queryset)
+def getQuestionnairesByUid(request, id):
+    queryset = Questionnaire.objects.get(uid=id)
+    # print(queryset)
     return JsonResponse(QuestionnaireSerializers(queryset).data, safe=False)
 
 def poss1(request):
-    if request.method== 'POST':
+    if request.method == 'POST':
         jsn = json.loads(request.POST.get('1', None))  # raw data
         # jsn = json.loads(request.body.decode("utf-8"))  ->form data
         print(jsn)
         return JsonResponse(jsn)
-    elif request.method=='GET':
+    elif request.method == 'GET':
         return HttpResponse("its get")
 
+#
+# class QuestionnairesViewSet(viewsets.ModelViewSet):
+#     # lookup_field = 'patientType'
+#     queryset = Questionnaire.objects.all().order_by('pk')
+#     serializer_class = QuestionnaireSerializers
+#
+#
+# class QuestionnaireContentViewSet(viewsets.ModelViewSet):
+#     queryset = QuestionnaireContent.objects.all().order_by('pk')
+#     serializer_class = QuestionnaireContentSerializers

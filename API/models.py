@@ -2,7 +2,10 @@ from django.db import models
 
 
 # Create your models here.
+
+
 class Questionnaire(models.Model):
+    uid = models.CharField(max_length=20, null=True, blank=True)
     title = models.CharField(max_length=200)
     ages = models.CharField(max_length=200)
     patientType = models.CharField(max_length=200)

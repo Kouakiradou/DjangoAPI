@@ -16,3 +16,7 @@ class QuestionnaireSerializers(serializers.ModelSerializer):
         fields = ('id', 'title', 'ages', 'patientType', 'questionnaireContent')
 
 
+class QuestionnaireListSerializers(serializers.ModelSerializer):
+    class Meta:
+        model = Questionnaire
+        fields = ('id', 'title', 'uid')

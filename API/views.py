@@ -1,8 +1,9 @@
-import json
+import json, io
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.http import JsonResponse
 from rest_framework import viewsets
+from rest_framework.parsers import JSONParser
 from .models import Questionnaire, QuestionnaireContent
 from .serializers import QuestionnaireSerializers, QuestionnaireContentSerializers, QuestionnaireListSerializers
 
@@ -21,11 +22,18 @@ def getAllQuestionnaires(request):
 
 
 def getQuestionnairesByUid(request, id):
-    queryset = Questionnaire.objects.get(uid=id)
+    try:
+        queryset = Questionnaire.objects.get(uid=id)
+    except Questionnaire.DoesNotExist:
+        queryset = None
     # print(queryset)
-    return JsonResponse(QuestionnaireSerializers(queryset).data, safe=False)
+    if queryset is not None:
+        return JsonResponse(QuestionnaireSerializers(queryset).data, safe=False)
+    else:
+        return HttpResponse("get nothing")
 
-def poss1(request):
+
+def post1(request):
     if request.method == 'POST':
         jsn = json.loads(request.POST.get('1', None))  # raw data
         # jsn = json.loads(request.body.decode("utf-8"))  ->form data
@@ -34,6 +42,25 @@ def poss1(request):
     elif request.method == 'GET':
         return HttpResponse("its get")
 
+
+def addQuestionnaire(request):
+    if request.method == 'GET':
+        return HttpResponse("should be post request.")
+    elif request.method == 'POST':
+        jsn = json.loads(request.POST.get('1', None))
+        # stream = io.BytesIO(jsn)
+        # data = JSONParser().parse(stream)
+        serializer = QuestionnaireSerializers(data=jsn)
+        print(serializer.is_valid())
+        jsnDict = serializer.validated_data
+        questionnaire = Questionnaire(uid=jsnDict['uid'], title=jsnDict['title'], ages=jsnDict['ages'], patientType=jsnDict['patientType'])
+        questionnaire.save()
+        for contents in jsnDict['questionnaireContent']:
+            questionnaire.questionnaireContent.create(questionText=contents['questionText'], answerType=contents['answerType'])
+        # print(serializer.validated_data)
+        # print(serializer.validated_data['questionnaireContent'][1]['id'])
+        # return JsonResponse(QuestionnaireSerializers(questionnaire).data, safe=False)
+        return HttpResponse("received")
 #
 # class QuestionnairesViewSet(viewsets.ModelViewSet):
 #     # lookup_field = 'patientType'

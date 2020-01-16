@@ -11,6 +11,7 @@ urlpatterns = [
     path('getQuestionnairesList/', views.getQuestionnairesList),
     path('getAllQuestionnaires/', views.getAllQuestionnaires),
     path('getQuestionnairesByUid/<str:id>/', views.getQuestionnairesByUid, name='getQuestionnairesByUid'),
-    path('poss/', views.poss1)
+    path('poss/', views.post1),
+    path('addQuestionnaire/', views.addQuestionnaire),
     # path('a/', views.QuestionnairesViewSet),
 ]

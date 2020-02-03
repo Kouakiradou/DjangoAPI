@@ -5,8 +5,7 @@ from django.http import JsonResponse
 from rest_framework import viewsets
 from rest_framework.parsers import JSONParser
 from .models import Questionnaire, QuestionnaireContent
-from .serializers import QuestionnaireSerializers, QuestionnaireContentSerializers, QuestionnaireListSerializers, \
-    QuestionnaireSerializersNoUid
+from .serializers import QuestionnaireSerializers, QuestionnaireContentSerializers, QuestionnaireListSerializers
 
 
 # Create your views here.
@@ -58,7 +57,8 @@ def addQuestionnaire(request):
                                       patientType=jsnDict['patientType'])
         questionnaire.save()
         for contents in jsnDict['questionnaireContent']:
-            questionnaire.questionnaireContent.create(questionText=contents['questionText'],
+            questionnaire.questionnaireContent.create(qid=contents['qid'],
+                                                      questionText=contents['questionText'],
                                                       answerType=contents['answerType'])
         print(serializer.validated_data)
         # print(serializer.validated_data['questionnaireContent'][1]['id'])
@@ -84,14 +84,17 @@ def editQuestionnaireByUid(request, id):
     except Questionnaire.DoesNotExist:
         return HttpResponse("Questionnaire not exist")
     jsn = json.loads(request.POST.get('1', None))
-    serializer = QuestionnaireSerializersNoUid(data=jsn)
+    serializer = QuestionnaireSerializers(data=jsn)
+    # print(serializer)
     print(serializer.is_valid())
+    # print(serializer.errors)
     jsnDict = serializer.validated_data
     Questionnaire.objects.filter(uid=id).update(title=jsnDict['title'], ages=jsnDict['ages'],
-                                                patientqType=jsnDict['patientType'])
+                                                patientType=jsnDict['patientType'])
     Questionnaire.objects.get(uid=id).questionnaireContent.all().delete()
     for contents in jsnDict['questionnaireContent']:
-        Questionnaire.objects.get(uid=id).questionnaireContent.create(questionText=contents['questionText'],
+        Questionnaire.objects.get(uid=id).questionnaireContent.create(qid=contents['qid'],
+                                                                      questionText=contents['questionText'],
                                                                       answerType=contents['answerType'])
     # Questionnaire.objects.filter(uid=id).update(title=jsnDict['ages'])
     # Questionnaire.objects.filter(uid=id).update(title=jsnDict['patientType'])

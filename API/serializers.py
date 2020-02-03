@@ -3,11 +3,13 @@ from .models import QuestionnaireContent, Questionnaire
 
 
 class QuestionnaireContentSerializers(serializers.ModelSerializer):
-    id = serializers.IntegerField(required=False)
 
     class Meta:
         model = QuestionnaireContent
-        fields = ('id', 'questionText', 'answerType')
+        fields = ('qid', 'questionText', 'answerType')
+        extra_kwargs = {
+            'qid': {'validators': []},
+        }
 
 
 class QuestionnaireSerializers(serializers.ModelSerializer):
@@ -16,6 +18,9 @@ class QuestionnaireSerializers(serializers.ModelSerializer):
     class Meta:
         model = Questionnaire
         fields = ('uid', 'title', 'ages', 'patientType', 'questionnaireContent')
+        extra_kwargs = {
+            'uid': {'validators': []},
+        }
 
 
 class QuestionnaireListSerializers(serializers.ModelSerializer):
@@ -24,9 +29,9 @@ class QuestionnaireListSerializers(serializers.ModelSerializer):
         fields = ('uid', 'title')
 
 
-class QuestionnaireSerializersNoUid(serializers.ModelSerializer):
-    questionnaireContent = QuestionnaireContentSerializers(many=True)
-
-    class Meta:
-        model = Questionnaire
-        fields = ('title', 'ages', 'patientType', 'questionnaireContent')
+# class QuestionnaireSerializersNoUid(serializers.ModelSerializer):
+#     questionnaireContent = QuestionnaireContentSerializers(many=True)
+#
+#     class Meta:
+#         model = Questionnaire
+#         fields = ('title', 'ages', 'patientType', 'questionnaireContent')

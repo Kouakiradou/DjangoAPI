@@ -17,6 +17,7 @@ class Questionnaire(models.Model):
 class QuestionnaireContent(models.Model):
     questionnaire = models.ForeignKey(Questionnaire, to_field="uid", on_delete=models.CASCADE,
                                       related_name='questionnaireContent')
+    qid = models.CharField(max_length=100, unique=True)
     questionText = models.CharField(max_length=500)
     answerType = models.CharField(max_length=100)
 

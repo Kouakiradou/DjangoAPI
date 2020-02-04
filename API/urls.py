@@ -10,10 +10,12 @@ urlpatterns = [
     # path('', include(route.urls)),
     path('getQuestionnairesList/', views.getQuestionnairesList),
     path('getAllQuestionnaires/', views.getAllQuestionnaires),
-    path('getQuestionnairesByUid/<str:id>/', views.getQuestionnairesByUid, name='getQuestionnairesByUid'),
+    path('getQuestionnaireByUid/<str:id>/', views.getQuestionnaireByUid, name='getQuestionnairesByUid'),
     path('poss/', views.post1),
     path('addQuestionnaire/', views.addQuestionnaire),
     path('editQuestionnaireByUid/<str:id>', views.editQuestionnaireByUid),
     path('deleteQuestionnaireByUid/<str:id>', views.deleteQuestionnaireByUid),
+    path('getAnswerByUid/<str:id>', views.getAnswerByUid),
+    path('addAnswer/', views.addAnswer),
     # path('a/', views.QuestionnairesViewSet),
 ]

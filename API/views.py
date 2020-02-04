@@ -4,8 +4,9 @@ from django.http import HttpResponse
 from django.http import JsonResponse
 from rest_framework import viewsets
 from rest_framework.parsers import JSONParser
-from .models import Questionnaire, QuestionnaireContent
-from .serializers import QuestionnaireSerializers, QuestionnaireContentSerializers, QuestionnaireListSerializers
+from .models import Questionnaire, QuestionnaireContent, AnswerContent
+from .serializers import QuestionnaireSerializers, QuestionnaireContentSerializers, QuestionnaireListSerializers, \
+    AnswerContentSerializers
 
 
 # Create your views here.
@@ -21,7 +22,7 @@ def getAllQuestionnaires(request):
     return JsonResponse(QuestionnaireSerializers(queryset, many=True).data, safe=False)
 
 
-def getQuestionnairesByUid(request, id):
+def getQuestionnaireByUid(request, id):
     try:
         queryset = Questionnaire.objects.get(uid=id)
     except Questionnaire.DoesNotExist:
@@ -110,3 +111,37 @@ def deleteQuestionnaireByUid(request, id):
         return HttpResponse("Questionnaire not exist")
     questionnaire.delete()
     return HttpResponse("Deleted")
+
+
+def getAnswerByUid(request, id):
+    try:
+        queryset = AnswerContent.objects.filter(uid=id)
+    except AnswerContent.DoesNotExist:
+        queryset = None
+    # print(queryset)
+    if queryset is not None:
+        return JsonResponse(AnswerContentSerializers(list(queryset), many=True).data, safe=False)
+    else:
+        return HttpResponse("get nothing")
+
+
+def addAnswer(request):
+    if request.method == 'GET':
+        return HttpResponse("should be post request.")
+    elif request.method == 'POST':
+        jsn = json.loads(request.POST.get('1', None))
+        # stream = io.BytesIO(jsn)
+        # data = JSONParser().parse(stream)
+        serializer = AnswerContentSerializers(data=jsn)
+        print(serializer.is_valid())
+        jsnDict = serializer.validated_data
+        answerContent = AnswerContent(uid=jsnDict['uid'], date=jsnDict['date'], age=jsnDict['age'])
+        answerContent.save()
+        for contents in jsnDict['questionAnswer']:
+            answerContent.questionAnswer.create(qid=contents['qid'],
+                                                answerType=contents['answerType'],
+                                                answer=contents['answer'])
+        print(serializer.validated_data)
+        # print(serializer.validated_data['questionnaireContent'][1]['id'])
+        # return JsonResponse(QuestionnaireSerializers(questionnaire).data, safe=False)
+        return HttpResponse("Received")

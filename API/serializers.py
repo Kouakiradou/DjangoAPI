@@ -6,10 +6,10 @@ class QuestionnaireContentSerializers(serializers.ModelSerializer):
 
     class Meta:
         model = QuestionnaireContent
-        fields = ('qid', 'questionText', 'answerType')
-        extra_kwargs = {
-            'qid': {'validators': []},
-        }
+        fields = ('qid', 'questionText', 'answerType', 'choices')
+        # extra_kwargs = {
+        #     'qid': {'validators': []},
+        # }
 
 
 class QuestionnaireSerializers(serializers.ModelSerializer):

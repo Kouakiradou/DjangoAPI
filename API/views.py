@@ -59,7 +59,8 @@ def addQuestionnaire(request):
         for contents in jsnDict['questionnaireContent']:
             questionnaire.questionnaireContent.create(qid=contents['qid'],
                                                       questionText=contents['questionText'],
-                                                      answerType=contents['answerType'])
+                                                      answerType=contents['answerType'],
+                                                      choices=contents['choices'])
         print(serializer.validated_data)
         # print(serializer.validated_data['questionnaireContent'][1]['id'])
         # return JsonResponse(QuestionnaireSerializers(questionnaire).data, safe=False)
@@ -85,7 +86,7 @@ def editQuestionnaireByUid(request, id):
         return HttpResponse("Questionnaire not exist")
     jsn = json.loads(request.POST.get('1', None))
     serializer = QuestionnaireSerializers(data=jsn)
-    # print(serializer)
+    print(serializer)
     print(serializer.is_valid())
     # print(serializer.errors)
     jsnDict = serializer.validated_data
@@ -95,7 +96,8 @@ def editQuestionnaireByUid(request, id):
     for contents in jsnDict['questionnaireContent']:
         Questionnaire.objects.get(uid=id).questionnaireContent.create(qid=contents['qid'],
                                                                       questionText=contents['questionText'],
-                                                                      answerType=contents['answerType'])
+                                                                      answerType=contents['answerType'],
+                                                                      choices=contents['choices'])
     # Questionnaire.objects.filter(uid=id).update(title=jsnDict['ages'])
     # Questionnaire.objects.filter(uid=id).update(title=jsnDict['patientType'])
     return HttpResponse("Edited")
